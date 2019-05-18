@@ -20,7 +20,7 @@ public class JdkDynamicAopProxyTest {
         // --------- car with AOP
         // 1. 设置被代理对象(Joinpoint)
         AdvisedSupport advisedSupport = new AdvisedSupport();
-        TargetSource targetSource = new TargetSource(car, Driveable.class);
+        TargetSource targetSource = new TargetSource(car, Car.class,Driveable.class);
         advisedSupport.setTargetSource(targetSource);
 
         // 2. 设置拦截器(Advice)

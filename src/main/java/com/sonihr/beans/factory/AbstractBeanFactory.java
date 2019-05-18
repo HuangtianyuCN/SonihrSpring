@@ -5,18 +5,37 @@ package com.sonihr.beans.factory;/*
 
 import com.sonihr.beans.BeanDefinition;
 import com.sonihr.beans.BeanPostProcessor;
-import com.sun.org.apache.bcel.internal.generic.RETURN;
-import com.sun.xml.internal.messaging.saaj.packaging.mime.util.BEncoderStream;
+import net.sf.cglib.proxy.Enhancer;
 
 import javax.swing.text.DefaultEditorKit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractBeanFactory implements BeanFactory{
-    private Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
-    private final List<String> beanDefinitionNames = new ArrayList<String>();
+    protected Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
+    protected Map<String,Object> secondCache = new HashMap();
+    protected Map<String,Object> thirdCache = new HashMap<>();
+    protected Map<String,Object> firstCache = new HashMap<>();
+
+    public Map<String, Object> getFirstCache() {
+        return firstCache;
+    }
+
+    public Map<String, Object> getThirdCache() {
+        return thirdCache;
+    }
+
+    public Map<String,Object> getSecondCache() {
+        return secondCache;
+    }
+
+    public Map<String, BeanDefinition> getBeanDefinitionMap() {
+        return beanDefinitionMap;
+    }
+
+    protected final List<String> beanDefinitionNames = new ArrayList<String>();
     //这里面存在的都是已经构造完整的实现了BeanPostProcessor的实例们
     private List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
@@ -24,12 +43,21 @@ public abstract class AbstractBeanFactory implements BeanFactory{
         for(BeanPostProcessor beanPostProcessor:beanPostProcessors){
             bean = beanPostProcessor.postProcessBeforeInitialization(bean,name);
         }
+        try{
+            Method method =  bean.getClass().getMethod("init",null);
+            method.invoke(bean,null);
+        }catch (Exception e){
 
+        }
         for(BeanPostProcessor beanPostProcessor:beanPostProcessors){
             bean = beanPostProcessor.postProcessAfterInitialization(bean,name);
         }
+        if(thirdCache.containsKey(name)){//空构造实例如果被AOP成代理实例，则放入三级缓存，说明已经构建完毕
+            firstCache.put(name,bean);
+        }
         return bean;
     }
+
 
 
     public Object getBean(String name) throws Exception {
@@ -38,7 +66,7 @@ public abstract class AbstractBeanFactory implements BeanFactory{
             throw new IllegalArgumentException("No bean named " + name + " is defined");
         Object bean = beanDefinition.getBean();
         if(bean==null){
-            bean=doCreateBean(beanDefinition);//根据生命周期来的，先创建后进行before，init,after
+            bean=doCreateBean(name,beanDefinition);//根据生命周期来的，先创建后进行before，init,after
             bean = initializeBean(bean,name);//
             beanDefinition.setBean(bean);
         }
@@ -59,9 +87,10 @@ public abstract class AbstractBeanFactory implements BeanFactory{
             getBean(beanName);
         }
     }
-    //每个类都有其不同的初始化过程
-    protected Object doCreateBean(BeanDefinition beanDefinition) throws Exception {
+
+    protected Object doCreateBean(String name,BeanDefinition beanDefinition) throws Exception {
         Object bean = createBeanInstance(beanDefinition);
+        thirdCache.put(name,bean);
         beanDefinition.setBean(bean);//先创建空实例然后赋值以保证不会出现循环引用的死锁
         applyPropertyValues(bean,beanDefinition);
         return bean;

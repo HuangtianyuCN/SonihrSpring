@@ -30,4 +30,8 @@ public class Car implements Driveable {
     public void running() {
         System.out.println("car is running");
     }
+
+    public void init(){
+        System.out.println("car use init()");
+    }
 }

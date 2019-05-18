@@ -10,10 +10,10 @@ public class ProxyFactory extends AdvisedSupport implements AopProxy{
     }
     protected final AopProxy createAopProxy(){
         //如果这个类没有接口
-        return new Cglib2AopProxy(this);
-//        if(getTargetSource().getInterfaces()==null||getTargetSource().getInterfaces().length==0){
-//            return new Cglib2AopProxy(this);
-//        }
-//        return new JdkDynamicAopProxy(this);
+        //return new Cglib2AopProxy(this);
+        if(getTargetSource().getInterfaces()==null||getTargetSource().getInterfaces().length==0){
+            return new Cglib2AopProxy(this);
+        }
+        return new JdkDynamicAopProxy(this);
     }
 }

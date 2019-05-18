@@ -7,6 +7,7 @@ import com.sonihr.aop.BeanFactoryAware;
 import com.sonihr.beans.BeanDefinition;
 import com.sonihr.beans.BeanReference;
 import com.sonihr.beans.PropertyValue;
+import com.sun.corba.se.impl.io.ValueUtility;
 import org.omg.CORBA.ObjectHelper;
 
 import java.lang.reflect.Field;
@@ -25,6 +26,10 @@ public class AutowireCapableBeanFactory extends AbstractBeanFactory {
             if(value instanceof BeanReference){//如果是ref，就创建这个ref
                 BeanReference beanReference = (BeanReference)value;
                 value = getBean(beanReference.getName());
+                String refName = beanReference.getName();
+                if(thirdCache.containsKey(refName)&&!firstCache.containsKey(refName)){//说明当前是循环依赖状态
+                    secondCache.put(beanReference.getName(),bean);//标注a ref b,b ref a中，b是后被循环引用的
+                }
             }
             //SetXXX
             try{
@@ -32,7 +37,7 @@ public class AutowireCapableBeanFactory extends AbstractBeanFactory {
                         + propertyValue.getName().substring(1), value.getClass());
                 declaredMethod.setAccessible(true);
                 declaredMethod.invoke(bean,value);
-            }catch (NoSuchMethodException e){//基本类型，但是只能识别String
+            }catch (NoSuchMethodException e){
                 Field declaredField = bean.getClass().getDeclaredField(propertyValue.getName());
                 declaredField.setAccessible(true);
                 declaredField.set(bean, value);

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+
+    <bean id="address" class="com.sonihr.Address">
+        <property name="local" value="beijing"></property>
+    </bean>
+
+    <bean id="car" class="com.sonihr.Car">
+        <property name="name" value="autotooo"></property>
+        <property name="address" ref="address"></property>
+    </bean>
+
+    <bean id="beanInitializeLogger" class="com.sonihr.BeanInitializeLogger">
+    </bean>
+
+</beans>

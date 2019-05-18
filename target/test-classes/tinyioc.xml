@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+
+    <bean id="address" class="com.sonihr.Address">
+        <property name="local" value="beijing"></property>
+        <property name="car" ref="car"></property>
+    </bean>
+
+    <!--<bean id="car" class="com.sonihr.Car">-->
+        <!--<property name="name" value="audi"></property>-->
+    <!--</bean>-->
+
+    <bean id="car" class="com.sonihr.Car">
+        <property name="name" value="autotooo"></property>
+        <property name="address" ref="address"></property>
+    </bean>
+
+    <bean id="student" class="com.sonihr.Student"></bean>
+    <!--<bean id="outputService" class="com.sonihr.OutputServiceImpl">-->
+    <!--</bean>-->
+
+    <!--<bean id="helloWorldService" class="com.sonihr.HelloWorldServiceImpl">-->
+        <!--<property name="text" value="Hello World!"></property>-->
+        <!--<property name="outputService" ref="outputService"></property>-->
+    <!--</bean>-->
+    <bean id="autoProxyCreator" class="com.sonihr.aop.AspectJAwareAdvisorAutoProxyCreator"></bean>
+
+    <bean id="timeInterceptor" class="com.sonihr.aop.TimerInterceptor"></bean>
+
+    <bean id="aspectjAspect" class="com.sonihr.aop.AspectJExpressionPointcutAdvisor">
+        <property name="advice" ref="timeInterceptor"></property>
+        <property name="expression" value= "execution(* com.sonihr..*.*(..))"></property>
+    </bean>
+
+</beans>

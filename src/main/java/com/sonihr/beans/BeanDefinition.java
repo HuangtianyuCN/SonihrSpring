@@ -3,8 +3,6 @@ package com.sonihr.beans;/*
 @date 2019/5/13 - 20:04
 **/
 
-import com.sonihr.beans.constructor.ConstructorArgument;
-
 public class BeanDefinition {
     private Object bean;
     private Class beanClass;

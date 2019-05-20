@@ -21,7 +21,18 @@
         <constructor-arg ref="address2"/>
     </bean>
 
+    <bean id="carByConvert" class="com.sonihr.Car">
+        <property name="name" value="notOnlySpring"></property>
+        <property name="price" value="1000"></property>
+    </bean>
+
     <bean id="student" class="com.sonihr.Student"></bean>
+
+    <bean id="anything" class="com.sonihr.Anything">
+        <property name="point" value="22;99"></property>
+    </bean>
+
+    <bean id="pointConverter" class="com.sonihr.beans.converter.PointConverter"></bean>
     <!--<bean id="outputService" class="com.sonihr.OutputServiceImpl">-->
     <!--</bean>-->
 

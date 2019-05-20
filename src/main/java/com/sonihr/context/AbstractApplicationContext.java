@@ -8,8 +8,10 @@ import com.sonihr.beans.BeanDefinition;
 import com.sonihr.beans.BeanPostProcessor;
 import com.sonihr.beans.BeanReference;
 import com.sonihr.beans.PropertyValue;
+import com.sonihr.beans.converter.Converter;
 import com.sonihr.beans.factory.AbstractBeanFactory;
 import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.Factory;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
@@ -17,6 +19,7 @@ import javax.print.attribute.standard.Severity;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +34,7 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     //创建全部beans
     public void refresh() throws Exception{
         loadBeanDefinitions(beanFactory);//读取xml文件，获取所有bean的信息并在工厂中注册
+        registerConverter(beanFactory);
         registerBeanPostProcessors(beanFactory);//所有的BeanPostProcessor接口的实现类先创建完毕
         onRefresh();//在实例化没有实现BeanPostProcessor接口的实例
     }
@@ -41,6 +45,14 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
         List beanPostProcessors = beanFactory.getBeansForType(BeanPostProcessor.class);
         for (Object beanPostProcessor : beanPostProcessors) {
             beanFactory.addBeanPostProcessor((BeanPostProcessor) beanPostProcessor);
+        }
+    }
+
+    protected void registerConverter(AbstractBeanFactory beanFactory) throws Exception {
+        List beanConverters = beanFactory.getBeansForType(Converter.class);
+        for(Object converter:beanConverters){
+            Type type = ((Converter)converter).getType();
+            beanFactory.getConverterFactory().getConverterMap().put(type,(Converter)converter);
         }
     }
 
@@ -65,7 +77,6 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
 
     private void resetReference(String invokeBeanName,BeanDefinition beanDefinition) throws Exception {
         Map<String,Object> thirdCache = beanFactory.getThirdCache();
-        Map<String,Object> secondCache = beanFactory.getSecondCache();
         Map<String,Object> firstCache = beanFactory.getFirstCache();
         Map<String,BeanDefinition> beanDefinitionMap = beanFactory.getBeanDefinitionMap();
         for (PropertyValue propertyValue : beanDefinition.getPropertyValues().getPropertyValues()) {

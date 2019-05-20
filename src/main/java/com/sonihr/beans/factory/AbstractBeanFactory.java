@@ -6,14 +6,11 @@ package com.sonihr.beans.factory;/*
 import com.sonihr.beans.BeanDefinition;
 import com.sonihr.beans.BeanPostProcessor;
 import com.sonihr.beans.BeanReference;
-import com.sonihr.beans.constructor.ConstructorArgument;
-import net.sf.cglib.proxy.Enhancer;
+import com.sonihr.beans.ConstructorArgument;
+import com.sonihr.beans.converter.ConverterFactory;
 
-import javax.swing.text.DefaultEditorKit;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,6 +19,11 @@ public abstract class AbstractBeanFactory implements BeanFactory{
     protected Map<String,Object> secondCache = new HashMap();
     protected Map<String,Object> thirdCache = new HashMap<>();
     protected Map<String,Object> firstCache = new HashMap<>();
+    protected ConverterFactory converterFactory = new ConverterFactory();
+
+    public ConverterFactory getConverterFactory() {
+        return converterFactory;
+    }
 
     public Map<String, Object> getFirstCache() {
         return firstCache;

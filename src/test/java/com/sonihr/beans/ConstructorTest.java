@@ -1,4 +1,4 @@
-package com.sonihr.beans.constructor;/*
+package com.sonihr.beans;/*
 @author 黄大宁Rhinos
 @date 2019/5/20 - 11:00
 **/

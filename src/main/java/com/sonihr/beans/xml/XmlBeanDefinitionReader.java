@@ -7,17 +7,12 @@ import com.sonihr.beans.AbstractBeanDefinitionReader;
 import com.sonihr.beans.BeanDefinition;
 import com.sonihr.beans.BeanReference;
 import com.sonihr.beans.PropertyValue;
-import com.sonihr.beans.constructor.ConstructorArgument;
-import com.sonihr.beans.factory.AutowireCapableBeanFactory;
-import com.sonihr.beans.factory.BeanFactory;
+import com.sonihr.beans.ConstructorArgument;
 import com.sonihr.beans.io.ResourceLoader;
-import com.sun.corba.se.spi.ior.ObjectKey;
-import jdk.internal.util.xml.impl.Input;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;

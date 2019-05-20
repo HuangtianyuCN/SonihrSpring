@@ -3,11 +3,22 @@ package com.sonihr.beans;/*
 @date 2019/5/13 - 20:04
 **/
 
+import com.sonihr.beans.constructor.ConstructorArgument;
+
 public class BeanDefinition {
     private Object bean;
     private Class beanClass;
     private String beanClassName;
     private PropertyValues propertyValues = new PropertyValues();
+    private ConstructorArgument constructorArgument = new ConstructorArgument();
+
+    public ConstructorArgument getConstructorArgument() {
+        return constructorArgument;
+    }
+
+    public void setConstructorArgument(ConstructorArgument constructorArgument) {
+        this.constructorArgument = constructorArgument;
+    }
 
     public PropertyValues getPropertyValues() {
         return propertyValues;

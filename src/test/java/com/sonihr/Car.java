@@ -10,6 +10,19 @@ public class Car implements Driveable {
     public Car() {
     }
 
+    public Car(String name, Liveable address) {
+        this.name = name;
+        this.address = address;
+    }
+
+    @Override
+    public String toString() {
+        return "Car{" +
+                "name='" + name + '\'' +
+                ", address=" + address +
+                '}';
+    }
+
     public String getName() {
         return name;
     }
@@ -31,7 +44,7 @@ public class Car implements Driveable {
         System.out.println("car is running");
     }
 
-    public void init(){
-        System.out.println("car use init()");
-    }
+//    public void init(){
+//        System.out.println("car use init()");
+//    }
 }

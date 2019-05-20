@@ -5,9 +5,13 @@ package com.sonihr.beans.factory;/*
 
 import com.sonihr.beans.BeanDefinition;
 import com.sonihr.beans.BeanPostProcessor;
+import com.sonihr.beans.BeanReference;
+import com.sonihr.beans.constructor.ConstructorArgument;
 import net.sf.cglib.proxy.Enhancer;
 
 import javax.swing.text.DefaultEditorKit;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.*;
@@ -73,8 +77,34 @@ public abstract class AbstractBeanFactory implements BeanFactory{
         return bean;
     }
 
-    private Object createBeanInstance(BeanDefinition beanDefinition) throws IllegalAccessException, InstantiationException {
-        return beanDefinition.getBeanClass().newInstance();
+    //增加构造函数版本1.0，只判断参数数量相同
+    private Object createBeanInstance(BeanDefinition beanDefinition) throws Exception {
+        if(beanDefinition.getConstructorArgument().isEmpty()){
+            return beanDefinition.getBeanClass().newInstance();
+        }else{
+            List<ConstructorArgument.ValueHolder> valueHolders = beanDefinition.getConstructorArgument().getArgumentValues();
+            Class clazz = Class.forName(beanDefinition.getBeanClassName());
+            Constructor[] cons = clazz.getConstructors();
+            for(Constructor constructor:cons){
+                if(constructor.getParameterCount()==valueHolders.size()){
+                    Object[] params = new Object[valueHolders.size()];
+                    for(int i=0;i<params.length;i++){
+                        params[i] = valueHolders.get(i).getValue();
+                        if(params[i] instanceof BeanReference){
+                            BeanReference ref = (BeanReference)params[i];
+                            String refName = ref.getName();
+                            if(thirdCache.containsKey(refName)&&!firstCache.containsKey(refName)){
+                                throw new IllegalAccessException("构造函数循环依赖"+refName);
+                            }else{
+                                params[i] = getBean(refName);
+                            }
+                        }
+                    }
+                    return constructor.newInstance(params);
+                }
+            }
+        }
+        return null;
     }
 
     public void registerBeanDefinition(String name,BeanDefinition beanDefinition){
@@ -89,6 +119,7 @@ public abstract class AbstractBeanFactory implements BeanFactory{
     }
 
     protected Object doCreateBean(String name,BeanDefinition beanDefinition) throws Exception {
+        //创建出的可能是空也可能是有参构造函数，但是均不是构造完全的
         Object bean = createBeanInstance(beanDefinition);
         thirdCache.put(name,bean);
         beanDefinition.setBean(bean);//先创建空实例然后赋值以保证不会出现循环引用的死锁

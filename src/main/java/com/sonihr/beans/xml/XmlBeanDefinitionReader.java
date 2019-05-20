@@ -7,6 +7,7 @@ import com.sonihr.beans.AbstractBeanDefinitionReader;
 import com.sonihr.beans.BeanDefinition;
 import com.sonihr.beans.BeanReference;
 import com.sonihr.beans.PropertyValue;
+import com.sonihr.beans.constructor.ConstructorArgument;
 import com.sonihr.beans.factory.AutowireCapableBeanFactory;
 import com.sonihr.beans.factory.BeanFactory;
 import com.sonihr.beans.io.ResourceLoader;
@@ -64,6 +65,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
         String className = element.getAttribute("class");
         BeanDefinition beanDefinition = new BeanDefinition();
         processProperty(element,beanDefinition);
+        processConstructorArgument(element,beanDefinition);
         beanDefinition.setBeanClassName(className);
         getRegistry().put(name,beanDefinition);
     }
@@ -86,8 +88,30 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
                     BeanReference beanReference = new BeanReference(ref);
                     beanDefinition.getPropertyValues().addPropertyValue(new PropertyValue(name,beanReference));
                 }
+            }
+        }
+    }
 
-
+    private void processConstructorArgument(Element element,BeanDefinition beanDefinition){
+        NodeList constructorNodes = element.getElementsByTagName("constructor-arg");
+        for(int i=0;i<constructorNodes.getLength();i++){
+            Node node = constructorNodes.item(i);
+            if(node instanceof Element){
+                Element constructorElement = (Element)node;
+                String name = constructorElement.getAttribute("name");
+                String type = constructorElement.getAttribute("type");
+                String value = constructorElement.getAttribute("value");
+                if(value!=null&&value.length()>0){//有value标签
+                    beanDefinition.getConstructorArgument().addArgumentValue(new ConstructorArgument.ValueHolder(value,type,name));
+                }else{
+                    String ref = constructorElement.getAttribute("ref");
+                    if(ref==null||ref.length()==0){
+                        throw new IllegalArgumentException("Configuration problem: <constructor-arg> element for property '"
+                                + name + "' must specify a ref or value");
+                    }
+                    BeanReference beanReference = new BeanReference(ref);
+                    beanDefinition.getConstructorArgument().addArgumentValue(new ConstructorArgument.ValueHolder(beanReference,type,name));
+                }
             }
         }
     }

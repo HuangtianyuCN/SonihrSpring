@@ -18,6 +18,14 @@ public class Address implements Liveable {
     public Address() {
     }
 
+    @Override
+    public String toString() {
+        return "Address{" +
+                "local='" + local + '\'' +
+                ", car=" + car +
+                '}';
+    }
+
     public String getLocal() {
         return local;
     }

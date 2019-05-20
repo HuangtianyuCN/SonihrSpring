@@ -6,13 +6,19 @@
         <property name="car" ref="car"></property>
     </bean>
 
-    <!--<bean id="car" class="com.sonihr.Car">-->
-        <!--<property name="name" value="audi"></property>-->
-    <!--</bean>-->
+    <bean id="address2" class="com.sonihr.Address">
+        <property name="local" value="beijingByConstructor"></property>
+    </bean>
+
 
     <bean id="car" class="com.sonihr.Car">
         <property name="name" value="autotooo"></property>
         <property name="address" ref="address"></property>
+    </bean>
+
+    <bean id="carByConstructor" class="com.sonihr.Car">
+        <constructor-arg value="constructor"/>
+        <constructor-arg ref="address2"/>
     </bean>
 
     <bean id="student" class="com.sonihr.Student"></bean>

@@ -8,6 +8,8 @@ import com.sonihr.beans.BeanPostProcessor;
 import com.sonihr.beans.BeanReference;
 import com.sonihr.beans.ConstructorArgument;
 import com.sonihr.beans.converter.ConverterFactory;
+import com.sonihr.beans.lifecycle.DisposableBean;
+import com.sonihr.beans.lifecycle.InitializingBean;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -50,7 +52,7 @@ public abstract class AbstractBeanFactory implements BeanFactory{
             bean = beanPostProcessor.postProcessBeforeInitialization(bean,name);
         }
         try{
-            Method method =  bean.getClass().getMethod("init",null);
+            Method method =  bean.getClass().getMethod("init_method",null);
             method.invoke(bean,null);
         }catch (Exception e){
 
@@ -126,6 +128,9 @@ public abstract class AbstractBeanFactory implements BeanFactory{
         thirdCache.put(name,bean);
         beanDefinition.setBean(bean);//先创建空实例然后赋值以保证不会出现循环引用的死锁
         applyPropertyValues(bean,beanDefinition);
+        if(bean instanceof InitializingBean){
+            ((InitializingBean) bean).afterPropertiesSet();
+        }
         return bean;
     }
     protected void applyPropertyValues(Object bean,BeanDefinition beanDefinition) throws Exception{

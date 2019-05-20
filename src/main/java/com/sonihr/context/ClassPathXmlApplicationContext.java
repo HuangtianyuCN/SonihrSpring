@@ -7,8 +7,10 @@ import com.sonihr.beans.BeanDefinition;
 import com.sonihr.beans.factory.AbstractBeanFactory;
 import com.sonihr.beans.factory.AutowireCapableBeanFactory;
 import com.sonihr.beans.io.ResourceLoader;
+import com.sonihr.beans.lifecycle.DisposableBean;
 import com.sonihr.beans.xml.XmlBeanDefinitionReader;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 
 public class ClassPathXmlApplicationContext extends AbstractApplicationContext{
@@ -29,6 +31,25 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext{
         xmlBeanDefinitionReader.loadBeanDefinitions(configLocation);
         for (Map.Entry<String, BeanDefinition> beanDefinitionEntry : xmlBeanDefinitionReader.getRegistry().entrySet()) {
             beanFactory.registerBeanDefinition(beanDefinitionEntry.getKey(), beanDefinitionEntry.getValue());
+        }
+    }
+
+    public void close(){
+        Map<String,Object> thirdCache = beanFactory.getThirdCache();
+        Map<String,Object> firstCache = beanFactory.getFirstCache();
+        for(Map.Entry<String,BeanDefinition> entry:beanFactory.getBeanDefinitionMap().entrySet()){
+            String beanName = entry.getKey();
+            Object invokeBeanName = entry.getValue().getBean();
+            Object realClassInvokeBean = thirdCache.get(beanName);
+            if(realClassInvokeBean instanceof DisposableBean){
+                ((DisposableBean) realClassInvokeBean).destroy();
+            }
+            try{
+                Method method =  realClassInvokeBean.getClass().getMethod("destroy_method",null);
+                method.invoke(realClassInvokeBean,null);
+            }catch (Exception e){
+
+            }
         }
     }
 

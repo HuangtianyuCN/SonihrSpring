@@ -4,11 +4,25 @@ package com.sonihr;/*
 **/
 
 import com.sonihr.beans.annotation.Autowired;
+import com.sonihr.beans.annotation.Service;
+import com.sonihr.beans.annotation.Value;
 
+@Service
 public class School {
     @Autowired
     private Student student;
+    @Value("njust")
     private String name;
+    @Value("11711001")
+    private int price;
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
 
     public String getName() {
         return name;

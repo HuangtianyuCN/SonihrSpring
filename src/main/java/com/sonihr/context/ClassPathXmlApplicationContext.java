@@ -4,6 +4,7 @@ package com.sonihr.context;/*
 **/
 
 import com.sonihr.beans.BeanDefinition;
+import com.sonihr.beans.annotation.annotationParser.AnnotationParser;
 import com.sonihr.beans.factory.AbstractBeanFactory;
 import com.sonihr.beans.factory.AutowireCapableBeanFactory;
 import com.sonihr.beans.io.ResourceLoader;
@@ -30,6 +31,12 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext{
         XmlBeanDefinitionReader xmlBeanDefinitionReader = new XmlBeanDefinitionReader(new ResourceLoader());
         xmlBeanDefinitionReader.loadBeanDefinitions(configLocation);
         for (Map.Entry<String, BeanDefinition> beanDefinitionEntry : xmlBeanDefinitionReader.getRegistry().entrySet()) {
+            beanFactory.registerBeanDefinition(beanDefinitionEntry.getKey(), beanDefinitionEntry.getValue());
+        }
+
+        AnnotationParser annotationParser = new AnnotationParser();
+        annotationParser.annotationBeanDefinitionReader(xmlBeanDefinitionReader.getPackageName());
+        for (Map.Entry<String, BeanDefinition> beanDefinitionEntry : annotationParser.getRegistry().entrySet()) {
             beanFactory.registerBeanDefinition(beanDefinitionEntry.getKey(), beanDefinitionEntry.getValue());
         }
     }

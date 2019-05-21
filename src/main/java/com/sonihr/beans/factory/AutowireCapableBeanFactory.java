@@ -27,13 +27,9 @@ public class AutowireCapableBeanFactory extends AbstractBeanFactory {
             if(refName.equals("")){
                 refName = field.getName();
             }
-            if(secondCache.get(refName)!=null){
-                throw new annotationException("可能存在ref和@Autowired的双重使用。");
-            }else{
-                secondCache.put(refName,bean);
-                field.setAccessible(true);
-                field.set(bean,getBean(refName));
-            }
+            secondCache.put(refName,bean);
+            field.setAccessible(true);
+            field.set(bean,getBean(refName));
         }
     }
 

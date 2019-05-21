@@ -4,8 +4,12 @@ package com.sonihr;/*
 **/
 
 import com.sonihr.beans.annotation.Autowired;
+import com.sonihr.beans.annotation.Component;
+import com.sonihr.beans.annotation.Value;
 
+@Component
 public class Student {
+    @Value("huangtianyu")
     private String stuName;
     @Autowired
     private School school;

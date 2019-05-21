@@ -50,10 +50,16 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             Node node = nl.item(i);
             if(node instanceof Element){
                 Element element = (Element)node;
-                processBeanDefinitionele(element);
+                String packagName = null;
+                if((packagName = element.getAttribute("base-package"))!=null&&packagName!=""){
+                    this.setPackageName(packagName);
+                }else{
+                    processBeanDefinitionele(element);
+                }
             }
         }
     }
+
 
     private void processBeanDefinitionele(Element element){
         String name = element.getAttribute("id");

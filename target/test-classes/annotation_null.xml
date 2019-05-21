@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+    <component-scan base-package="com.sonihr"/>
+    <bean id="carWithXml" class="com.sonihr.Car">
+        <property name="name" value="carWithXml"></property>
+        <property name="price" value="10086"></property>
+    </bean>
+    <bean id="studentWithXml" class="com.sonihr.Student">
+        <property name="stuName" value="studentWithXml"></property>
+    </bean>
+</beans>

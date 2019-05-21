@@ -73,7 +73,8 @@ public abstract class AbstractBeanFactory implements BeanFactory{
         if(beanDefinition==null)
             throw new IllegalArgumentException("No bean named " + name + " is defined");
         Object bean = beanDefinition.getBean();
-        if(bean==null){
+        //如果bean==null说明还未存在，不是单例说明是否存在都要重新创建
+        if(bean==null||!beanDefinition.isSingleton()){
             bean=doCreateBean(name,beanDefinition);//根据生命周期来的，先创建后进行before，init,after
             bean = initializeBean(bean,name);//
             beanDefinition.setBean(bean);
@@ -128,12 +129,17 @@ public abstract class AbstractBeanFactory implements BeanFactory{
         thirdCache.put(name,bean);
         beanDefinition.setBean(bean);//先创建空实例然后赋值以保证不会出现循环引用的死锁
         applyPropertyValues(bean,beanDefinition);
+        injectAnnotation(bean,beanDefinition);
         if(bean instanceof InitializingBean){
             ((InitializingBean) bean).afterPropertiesSet();
         }
         return bean;
     }
     protected void applyPropertyValues(Object bean,BeanDefinition beanDefinition) throws Exception{
+
+    }
+
+    protected void injectAnnotation(Object bean,BeanDefinition beanDefinition) throws Exception{
 
     }
 

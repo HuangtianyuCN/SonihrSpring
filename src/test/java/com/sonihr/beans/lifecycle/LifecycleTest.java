@@ -10,7 +10,7 @@ import org.junit.Test;
 
 public class LifecycleTest {
     @Test
-    public void testConvert() throws Exception {
+    public void testLifecycle() throws Exception {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("life.xml");
         Life life = (Life) applicationContext.getBean("life");
         System.out.println(life.toString());

@@ -7,12 +7,35 @@ import com.sonihr.aop.BeanFactoryAware;
 import com.sonihr.beans.BeanDefinition;
 import com.sonihr.beans.BeanReference;
 import com.sonihr.beans.PropertyValue;
+import com.sonihr.beans.annotation.Autowired;
+import com.sonihr.exception.annotationException;
+import org.aspectj.weaver.reflect.ReflectionBasedReferenceTypeDelegate;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 
 public class AutowireCapableBeanFactory extends AbstractBeanFactory {
+
+    protected void injectAnnotation(Object bean,BeanDefinition beanDefinition) throws Exception{
+        Field[] fields = bean.getClass().getDeclaredFields();
+        for(Field field:fields){
+            Autowired autowired = field.getAnnotation(Autowired.class);
+            if(autowired==null)
+                continue;
+            String refName = autowired.getId();
+            if(refName.equals("")){
+                refName = field.getName();
+            }
+            if(secondCache.get(refName)!=null){
+                throw new annotationException("可能存在ref和@Autowired的双重使用。");
+            }else{
+                secondCache.put(refName,bean);
+                field.setAccessible(true);
+                field.set(bean,getBean(refName));
+            }
+        }
+    }
 
     protected void applyPropertyValues(Object bean,BeanDefinition mbd) throws Exception {
         //为什么要有BeanFactoryAware?这个接口用于标注这个类是用于AOP处理的，setBeanFactory是为了后面获取所有的切面类。
@@ -51,8 +74,6 @@ public class AutowireCapableBeanFactory extends AbstractBeanFactory {
                 declaredField.setAccessible(true);
                 declaredField.set(bean, convertedValue);
             }
-
-
         }
     }
 }

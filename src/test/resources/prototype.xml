@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+    <bean id="carPrototype" class="com.sonihr.Car" scope="prototype"></bean>
+    <bean id="carSingleton" class="com.sonihr.Car"></bean>
+</beans>

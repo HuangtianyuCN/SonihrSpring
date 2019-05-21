@@ -58,11 +58,18 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
     private void processBeanDefinitionele(Element element){
         String name = element.getAttribute("id");
         String className = element.getAttribute("class");
+        String scope = element.getAttribute("scope");
         BeanDefinition beanDefinition = new BeanDefinition();
         processProperty(element,beanDefinition);
         processConstructorArgument(element,beanDefinition);
         beanDefinition.setBeanClassName(className);
+        if(scope==null||scope.length()==0||scope.equals("singleton")){
+            beanDefinition.setSingleton(true);
+        }else{
+            beanDefinition.setSingleton(false);
+        }
         getRegistry().put(name,beanDefinition);
+
     }
     private void processProperty(Element element,BeanDefinition beanDefinition){
         NodeList propertyNodes = element.getElementsByTagName("property");

@@ -17,11 +17,16 @@ import java.util.Map;
 public class ClassPathXmlApplicationContext extends AbstractApplicationContext{
     private String configLocation;
 
-    public ClassPathXmlApplicationContext(String configLocation) throws Exception {
-        this(configLocation, new AutowireCapableBeanFactory());
+    public ClassPathXmlApplicationContext(ApplicationContext parent, String configLocation) throws Exception {
+        this(configLocation,new AutowireCapableBeanFactory(),parent);
     }
-    public ClassPathXmlApplicationContext(String configLocation,AbstractBeanFactory beanFactory) throws Exception {
+
+    public ClassPathXmlApplicationContext(String configLocation) throws Exception {
+        this(configLocation, new AutowireCapableBeanFactory(),null);
+    }
+    public ClassPathXmlApplicationContext(String configLocation,AbstractBeanFactory beanFactory,ApplicationContext parent) throws Exception {
         super(beanFactory);
+        this.setParent(parent);
         this.configLocation=configLocation;
         refresh();
     }
@@ -35,7 +40,10 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext{
         }
 
         AnnotationParser annotationParser = new AnnotationParser();
-        annotationParser.annotationBeanDefinitionReader(xmlBeanDefinitionReader.getPackageName());
+        String packageName = xmlBeanDefinitionReader.getPackageName();
+        if(packageName==null||packageName.length()==0)
+            return;
+        annotationParser.annotationBeanDefinitionReader(packageName);
         for (Map.Entry<String, BeanDefinition> beanDefinitionEntry : annotationParser.getRegistry().entrySet()) {
             beanFactory.registerBeanDefinition(beanDefinitionEntry.getKey(), beanDefinitionEntry.getValue());
         }

@@ -28,11 +28,24 @@ import java.util.Set;
 public abstract class AbstractApplicationContext implements ApplicationContext {
     protected AbstractBeanFactory beanFactory;
 
+    private ApplicationContext parent;
+
+
+
+    public ApplicationContext getParent() {
+        return parent;
+    }
+
+    public void setParent(ApplicationContext parent) {
+        this.parent = parent;
+    }
+
     public AbstractApplicationContext(AbstractBeanFactory beanFactory) {
         this.beanFactory = beanFactory;
     }
     //创建全部beans
     public void refresh() throws Exception{
+        beanFactory.setContext(this);
         loadBeanDefinitions(beanFactory);//读取xml文件，获取所有bean的信息并在工厂中注册
         registerConverter(beanFactory);
         registerBeanPostProcessors(beanFactory);//所有的BeanPostProcessor接口的实现类先创建完毕
@@ -79,6 +92,8 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
         Map<String,Object> thirdCache = beanFactory.getThirdCache();
         Map<String,Object> firstCache = beanFactory.getFirstCache();
         Map<String,BeanDefinition> beanDefinitionMap = beanFactory.getBeanDefinitionMap();
+        if(beanDefinition==null)
+            return;
         for (PropertyValue propertyValue : beanDefinition.getPropertyValues().getPropertyValues()) {
             String refName = propertyValue.getName();
             if (firstCache.containsKey(refName)) {//如果是ref，就创建这个ref

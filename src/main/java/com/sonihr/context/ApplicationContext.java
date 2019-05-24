@@ -6,5 +6,6 @@ package com.sonihr.context;/*
 import com.sonihr.beans.factory.BeanFactory;
 
 public interface ApplicationContext extends BeanFactory {
-
+     void setParent(ApplicationContext parent);
+     ApplicationContext getParent();
 }

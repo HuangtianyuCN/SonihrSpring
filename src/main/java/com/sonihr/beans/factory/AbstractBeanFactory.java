@@ -10,6 +10,8 @@ import com.sonihr.beans.ConstructorArgument;
 import com.sonihr.beans.converter.ConverterFactory;
 import com.sonihr.beans.lifecycle.DisposableBean;
 import com.sonihr.beans.lifecycle.InitializingBean;
+import com.sonihr.context.AbstractApplicationContext;
+import com.sonihr.context.ApplicationContext;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -22,6 +24,15 @@ public abstract class AbstractBeanFactory implements BeanFactory{
     protected Map<String,Object> thirdCache = new HashMap<>();
     protected Map<String,Object> firstCache = new HashMap<>();
     protected ConverterFactory converterFactory = new ConverterFactory();
+    protected AbstractApplicationContext context;
+
+    public AbstractApplicationContext getContext() {
+        return context;
+    }
+
+    public void setContext(AbstractApplicationContext context) {
+        this.context = context;
+    }
 
     public ConverterFactory getConverterFactory() {
         return converterFactory;
@@ -70,6 +81,16 @@ public abstract class AbstractBeanFactory implements BeanFactory{
 
     public Object getBean(String name) throws Exception {
         BeanDefinition beanDefinition = beanDefinitionMap.get(name);
+        ApplicationContext context = this.getContext();
+        while (beanDefinition==null&&context.getParent()!=null){
+            ApplicationContext parent = context.getParent();
+            Object object = parent.getBean(name);
+            if(object!=null){
+                return object;
+            }else{
+                context = parent;
+            }
+        }
         if(beanDefinition==null)
             throw new IllegalArgumentException("No bean named " + name + " is defined");
         Object bean = beanDefinition.getBean();

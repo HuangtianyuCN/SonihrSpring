@@ -7,6 +7,7 @@ import com.sonihr.beans.BeanDefinition;
 import com.sonihr.beans.annotation.annotationParser.AnnotationParser;
 import com.sonihr.beans.factory.AbstractBeanFactory;
 import com.sonihr.beans.factory.AutowireCapableBeanFactory;
+import com.sonihr.beans.factory.BeanFactory;
 import com.sonihr.beans.io.ResourceLoader;
 import com.sonihr.beans.lifecycle.DisposableBean;
 import com.sonihr.beans.xml.XmlBeanDefinitionReader;
@@ -68,4 +69,8 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext{
         }
     }
 
+    @Override
+    public AbstractBeanFactory getBeanFactory() {
+        return beanFactory;
+    }
 }

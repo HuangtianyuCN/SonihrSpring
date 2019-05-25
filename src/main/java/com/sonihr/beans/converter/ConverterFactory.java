@@ -3,7 +3,6 @@ package com.sonihr.beans.converter;/*
 @date 2019/5/20 - 16:04
 **/
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;

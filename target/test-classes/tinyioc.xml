@@ -26,7 +26,7 @@
         <property name="price" value="1000"></property>
     </bean>
 
-    <bean id="student" class="com.sonihr.Student"></bean>
+    <!--<bean id="student" class="com.sonihr.Student"></bean>-->
 
     <bean id="anything" class="com.sonihr.Anything">
         <property name="point" value="22;99"></property>
@@ -46,6 +46,13 @@
 
     <bean id="aspectjAspect" class="com.sonihr.aop.AspectJExpressionPointcutAdvisor">
         <property name="advice" ref="timeInterceptor"></property>
+        <property name="expression" value= "execution(* com.sonihr..*.*(..))"></property>
+    </bean>
+
+    <bean id="loggerInterceptor" class="com.sonihr.aop.LoggerInterceptor"></bean>
+
+    <bean id="aspectjAspect2" class="com.sonihr.aop.AspectJExpressionPointcutAdvisor">
+        <property name="advice" ref="loggerInterceptor"></property>
         <property name="expression" value= "execution(* com.sonihr..*.*(..))"></property>
     </bean>
 
